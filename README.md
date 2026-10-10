@@ -1,6 +1,6 @@
 # YouTube Research
 
-A small Next.js app for getting more out of YouTube videos than just watching them:
+A self-hosted Next.js tool for summarising YouTube videos and researching whole channels with an LLM, instead of watching everything yourself.
 
 - **YouTube Summaries** — paste a URL, get a transcript-based summary, stored for later.
 - **"Analyse for me"** — a deeper, optionally-personalised take on a saved video, streamed from a local or hosted LLM.
@@ -9,6 +9,8 @@ A small Next.js app for getting more out of YouTube videos than just watching th
 
 ![YouTube Summaries and Channel Research panels, in demo mode with seeded sample data](docs/screenshot.png)
 *Demo mode (`DEMO_MODE=true`) — every row shown is seeded sample data, not a real video or channel.*
+
+**Requirements:** Node.js ≥ 20.9.0 (Next.js's own minimum). `npm test` needs Node ≥ 22.6, since it relies on `--experimental-strip-types`.
 
 ## Try it with zero API keys
 
@@ -19,7 +21,7 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:3000. You'll see a few seeded sample rows — a couple of
+Then open the URL printed in the terminal (usually http://localhost:3000). You'll see a few seeded sample rows — a couple of
 video summaries, one completed Channel Research run with a sample chat
 thread already in it, and one pre-cached "Analyse for me" result. This is
 seeded once into an otherwise-empty database; it's read-only in the sense
@@ -61,14 +63,8 @@ start — there's nothing to migrate by hand.
 `$DATA_DIR/youtube.db`, schema applied from `schema.sql` on startup. No ORM,
 no migrations tool — the schema is small enough that one file is simpler
 than either. `DATA_DIR` also holds `youtube-analyses.json`, the cache for
-the "Analyse for me" panel; both need `DATA_DIR` to be a writable directory
-(the default, `./data`, always is — this only bites you if you mount
-something read-only over it in a container, which is exactly the bug this
-app's README is honest about: an earlier version of this code lived in a
-deployment where that mount actually was read-only, so every cached
-analysis silently failed to save. Fixed here by using an ordinary writable
-directory; there's no footgun left to avoid, just worth knowing why
-`DATA_DIR` has to be writable).
+the "Analyse for me" panel. `DATA_DIR` must be a writable directory (the
+default, `./data`, always is).
 
 **YouTube Summaries pipeline** (`app/api/youtube/route.ts`): extract video
 ID → fetch transcript (`features/youtube/transcript.ts`, via the
@@ -150,11 +146,18 @@ Covers the queue poller's retry/backoff/already-done logic
 (`features/youtube/queue-poller.test.ts`) against a temporary SQLite file —
 never the real database, and no network calls.
 
-## Taking a screenshot
+## Limitations
 
-Run the app in demo mode (`DEMO_MODE=true`), open a Channel Research run
-with its synthesis and chat thread expanded, and replace
-`docs/screenshot.png` with that.
+- Transcript fetching uses YouTube's unofficial caption endpoint, not a
+  documented API — it can break or get rate-limited without warning.
+- There is no authentication of any kind. Do not expose this to the
+  internet; run it locally or behind your own access control.
+- If the server restarts while a Channel Research run is in progress, that
+  run's row is stuck showing `running` forever — there's no recovery for an
+  interrupted run.
+- Automated tests currently cover only the queue poller
+  (`features/youtube/queue-poller.test.ts`); the rest of the app is
+  untested.
 
 ## What this app deliberately doesn't do
 
