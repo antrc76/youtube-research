@@ -1,4 +1,5 @@
 import React from 'react';
+import { parseGfmTable } from './markdown-table';
 
 function escRx(s: string) {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -95,6 +96,55 @@ export default function MarkdownBlock({ content, highlight, prose }: Props) {
         </h4>
       );
       i++; continue;
+    }
+
+    // GFM table — a header row immediately followed by a valid separator
+    // row (e.g. `| --- | :---: | ---: |`).
+    if (line.includes('|')) {
+      const table = parseGfmTable(lines, i);
+      if (table) {
+        nodes.push(
+          <div key={i} className="my-2 w-full max-w-full overflow-x-auto rounded border" style={{ borderColor: 'var(--border)' }}>
+            <table className="text-sm border-collapse" style={{ minWidth: '100%' }}>
+              <thead>
+                <tr>
+                  {table.header.map((cell, ci) => (
+                    <th
+                      key={ci}
+                      className="px-3 py-1.5 text-xs font-bold tracking-wider uppercase whitespace-nowrap"
+                      style={{
+                        color: 'var(--text-dim)',
+                        background: 'var(--bg-panel)',
+                        borderBottom: '1px solid var(--border)',
+                        textAlign: table.aligns[ci] ?? 'left',
+                      }}
+                    >
+                      {renderInline(cell, highlight)}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {table.rows.map((row, ri) => (
+                  <tr key={ri} style={{ borderBottom: ri < table.rows.length - 1 ? '1px solid #ffffff07' : 'none' }}>
+                    {row.map((cell, ci) => (
+                      <td
+                        key={ci}
+                        className="px-3 py-1.5 align-top"
+                        style={{ color: 'var(--text-muted)', textAlign: table.aligns[ci] ?? 'left' }}
+                      >
+                        {renderInline(cell, highlight)}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
+        i += table.lineCount;
+        continue;
+      }
     }
 
     // Collect consecutive list items

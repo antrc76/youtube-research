@@ -1,4 +1,6 @@
 import Database from 'better-sqlite3';
+import { mkdirSync } from 'fs';
+import path from 'path';
 
 /**
  * DB access for the save-to-playlist queue poller's own queue_handoffs table.
@@ -7,6 +9,12 @@ import Database from 'better-sqlite3';
  * explicit argument so tests can point it at a temporary sqlite file instead
  * of the real database. Opens and closes a connection per call; the poller
  * runs at most once every few minutes, so this isn't a hot path.
+ *
+ * In production dbPath is always db.ts's DB_PATH, whose directory db.ts
+ * already creates on import — but this module makes no assumption about
+ * import order or where dbPath came from, so it creates the directory
+ * itself too, every time, before opening anything. mkdirSync with
+ * recursive:true is a cheap no-op once the directory exists.
  */
 
 export type QueueStatus = 'pending' | 'processing' | 'done' | 'failed';
@@ -22,6 +30,7 @@ export interface QueueHandoff {
 }
 
 function withDb<T>(dbPath: string, fn: (db: Database.Database) => T): T {
+  mkdirSync(path.dirname(dbPath), { recursive: true });
   const db = new Database(dbPath);
   try {
     return fn(db);

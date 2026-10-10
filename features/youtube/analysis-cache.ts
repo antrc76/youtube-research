@@ -19,6 +19,7 @@ export type AnalysesById = Record<string, CachedAnalysis>;
 
 export async function readAnalyses(store: AnalysisStore): Promise<AnalysesById> {
   try {
+    await fs.mkdir(path.dirname(STORE_PATHS[store]), { recursive: true });
     const raw = await fs.readFile(STORE_PATHS[store], 'utf-8');
     const parsed = JSON.parse(raw);
     if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
@@ -46,6 +47,7 @@ export async function writeAnalysis(
 
 export async function deleteAnalysis(store: AnalysisStore, id: string): Promise<void> {
   const target = STORE_PATHS[store];
+  await fs.mkdir(path.dirname(target), { recursive: true });
   const current = await readAnalyses(store);
   if (!(id in current)) return;
   delete current[id];

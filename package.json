@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --experimental-strip-types --import ./features/youtube/test/register-ts-extension-resolve-hook.mjs --test features/youtube/*.test.ts"
+    "test": "node --experimental-strip-types --import ./features/youtube/test/register-ts-extension-resolve-hook.mjs --test features/youtube/*.test.ts components/*.test.ts"
   },
   "dependencies": {
     "better-sqlite3": "^13.0.3",

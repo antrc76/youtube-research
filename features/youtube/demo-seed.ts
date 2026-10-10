@@ -28,6 +28,12 @@ The channel documents building a small self-hosted developer dashboard — a Nex
 - Ollama for local inference, with an optional hosted model as a fallback for prompts too large for the local model's context budget
 - Deployed as a single container, no reverse proxy or orchestration layer
 
+| Layer | Choice | Why (per the creator) |
+| --- | --- | :---: |
+| Database | SQLite | Single process, no server to deploy |
+| Local model | Ollama | Free, runs on the same machine |
+| Fallback model | Hosted API | Only for prompts over the local budget |
+
 ## 3. Chronology of Decisions
 
 Early videos start with a single hard-coded feature and a database file committed to the repo — by the middle of the series this gets reworked into environment-variable-driven configuration and a schema file applied on startup, after running into the usual "this breaks on anyone else's machine" problems. The local-vs-hosted-model routing is introduced about halfway through, once prompt sizes start exceeding what the local model handles well.
