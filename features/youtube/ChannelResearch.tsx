@@ -581,7 +581,7 @@ interface TriggerFormProps {
 }
 
 function TriggerForm({ onStarted }: TriggerFormProps) {
-  const [channel, setChannel] = useState('@example-channel');
+  const [channel, setChannel] = useState('');
   const [after, setAfter] = useState(() => monthsAgoISO(3));
   const [before, setBefore] = useState(() => isoDate(new Date()));
   const [submitting, setSubmitting] = useState(false);
@@ -623,7 +623,7 @@ function TriggerForm({ onStarted }: TriggerFormProps) {
           value={channel}
           onChange={e => setChannel(e.target.value)}
           disabled={submitting}
-          placeholder="@handle or URL"
+          placeholder="@example-channel"
           className="px-3 py-1.5 text-sm rounded font-mono"
           style={{ background: 'var(--bg-base)', border: '1px solid var(--border)', color: 'var(--text)', outline: 'none', width: '180px' }}
         />

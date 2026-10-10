@@ -34,7 +34,7 @@ Early videos start with a single hard-coded feature and a database file committe
 
 ## 4. Current State
 
-By the end of the period covered, the project has a working demo mode, a documented setup path, and a short test suite for the trickiest piece of logic (a retry/backoff queue). Still open: no CI, and the UI is functional rather than polished.
+By the end of the period covered, the project has a working demo mode, a documented setup path, and a short test suite for the trickiest piece of logic (a retry/backoff queue). Still open: no CI.
 
 ---
 *This is sample synthesis text generated for demo mode — it does not describe a real channel.*`;
