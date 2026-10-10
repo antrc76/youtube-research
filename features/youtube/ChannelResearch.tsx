@@ -61,16 +61,22 @@ export interface RunRowProps {
 export function RunRow({ run, onSelect, onDelete, selected }: RunRowProps) {
   const isRunning = run.status === 'running';
   return (
-    <button
-      type="button"
+    // A <div> with role="button", not a real <button> — the delete button
+    // below has to live inside this row for layout/click-target reasons, and
+    // a <button> can't contain another <button> (invalid HTML, breaks
+    // hydration). Keyboard-operable via tabIndex + onKeyDown instead.
+    <div
+      role="button"
+      tabIndex={0}
       onClick={() => onSelect(run.id)}
-      className="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-left transition-colors"
+      onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelect(run.id); } }}
+      className="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-left transition-colors cursor-pointer"
       style={{
         background: selected ? `${ACCENT_COLOR}11` : 'transparent',
         borderLeft: selected ? `2px solid ${ACCENT_COLOR}` : '2px solid transparent',
       }}
-      onMouseEnter={e => { if (!selected) (e.currentTarget as HTMLButtonElement).style.background = '#ffffff05'; }}
-      onMouseLeave={e => { if (!selected) (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; }}
+      onMouseEnter={e => { if (!selected) (e.currentTarget as HTMLDivElement).style.background = '#ffffff05'; }}
+      onMouseLeave={e => { if (!selected) (e.currentTarget as HTMLDivElement).style.background = 'transparent'; }}
     >
       {selected ? (
         <ChevronDown size={12} style={{ color: ACCENT_COLOR, flexShrink: 0 }} />
@@ -112,7 +118,7 @@ export function RunRow({ run, onSelect, onDelete, selected }: RunRowProps) {
       >
         <Trash2 size={11} strokeWidth={1.8} />
       </button>
-    </button>
+    </div>
   );
 }
 

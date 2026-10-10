@@ -7,8 +7,8 @@ A small Next.js app for getting more out of YouTube videos than just watching th
 - **Channel Research** — give it a channel and a date range; it fetches every upload in range, summarises each one, synthesises a single report, and lets you ask follow-up questions in a multi-turn chat grounded in the actual transcripts.
 - **Save-to-playlist queue** (optional, off by default) — add videos to a YouTube playlist from your phone; a background poller picks them up, summarises them, and removes them from the playlist.
 
-![screenshot placeholder](docs/screenshot.png)
-*(Replace with an actual screenshot before sharing — see "Taking a screenshot" below.)*
+![YouTube Summaries and Channel Research panels, in demo mode with seeded sample data](docs/screenshot.png)
+*Demo mode (`DEMO_MODE=true`) — every row shown is seeded sample data, not a real video or channel.*
 
 ## Try it with zero API keys
 
