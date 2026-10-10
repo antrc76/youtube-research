@@ -7,7 +7,10 @@
   --border: #22284a;
   --text: #e8eaf4;
   --text-muted: #a8adc8;
-  --text-dim: #6b7290;
+  /* WCAG AA requires >=4.5:1 for normal text. The original #6b7290 only hit
+     ~3.8:1 against --bg-panel. #8c92b0 clears ~5.9:1 against --bg-panel and
+     ~6.3:1 against --bg-base. */
+  --text-dim: #8c92b0;
   --cyan: #00f5ff;
   --green: #00ff88;
   --gold: #ffd700;

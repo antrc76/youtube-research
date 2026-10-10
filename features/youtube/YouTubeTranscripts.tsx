@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { Sparkles, Brain, Square, Trash2, RefreshCw } from 'lucide-react';
+import MarkdownBlock from '@/components/MarkdownBlock';
 
 export interface TranscriptEntry {
   ts: string;
@@ -337,10 +338,8 @@ export default function YouTubeTranscripts() {
       )}
 
       <div
-        className="grid px-4 py-2.5 text-[13px] font-bold tracking-[0.2em] uppercase"
+        className="grid grid-cols-[108px_1fr_52px] sm:grid-cols-[260px_1fr_100px] gap-3 px-4 py-2.5 text-[13px] font-bold tracking-[0.2em] uppercase"
         style={{
-          gridTemplateColumns: '180px 1fr 100px',
-          gap: '12px',
           background: 'var(--bg-panel)',
           borderBottom: '1px solid var(--border)',
           color: 'var(--text-dim)',
@@ -384,10 +383,8 @@ export default function YouTubeTranscripts() {
                     setOpenKey(t.url);
                   }
                 }}
-                className="w-full grid px-4 py-2.5 items-center text-xs text-left cursor-pointer transition-colors"
+                className="w-full grid grid-cols-[108px_1fr_52px] sm:grid-cols-[260px_1fr_100px] gap-3 px-4 py-2.5 items-center text-xs text-left cursor-pointer transition-colors"
                 style={{
-                  gridTemplateColumns: '180px 1fr 100px',
-                  gap: '12px',
                   background: 'transparent',
                 }}
                 onMouseEnter={e => {
@@ -565,7 +562,7 @@ export default function YouTubeTranscripts() {
                       {a.status === 'error' ? (
                         <div style={{ color: 'var(--pink)' }}>Error: {a.message}</div>
                       ) : 'text' in a && a.text ? (
-                        <div className="whitespace-pre-wrap font-mono">{a.text}</div>
+                        <MarkdownBlock content={a.text} />
                       ) : (
                         <div style={{ color: 'var(--text-dim)' }}>
                           Routing this transcript to the best available model…

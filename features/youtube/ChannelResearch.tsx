@@ -85,11 +85,11 @@ export function RunRow({ run, onSelect, onDelete, selected }: RunRowProps) {
       )}
       <span className="font-mono" style={{ color: ACCENT_COLOR }}>#{run.id}</span>
       <span className="flex-1 truncate font-bold" style={{ color: 'var(--text)' }}>{run.channel}</span>
-      <span style={{ color: 'var(--text-dim)', whiteSpace: 'nowrap' }}>
+      <span className="hidden sm:inline-flex" style={{ color: 'var(--text-dim)', whiteSpace: 'nowrap' }}>
         {run.date_from} → {run.date_to}
       </span>
       <span
-        className="text-[10px] font-bold tracking-wider uppercase px-1.5 py-0.5 rounded ml-2"
+        className="text-[10px] font-bold tracking-wider uppercase px-1.5 py-0.5 rounded flex-shrink-0"
         style={{
           color: statusColor(run.status),
           border: `1px solid ${statusColor(run.status)}55`,
@@ -99,7 +99,7 @@ export function RunRow({ run, onSelect, onDelete, selected }: RunRowProps) {
       >
         {run.status}
       </span>
-      <span className="font-mono tabular-nums ml-2" style={{ color: 'var(--text-dim)', whiteSpace: 'nowrap' }}>
+      <span className="hidden sm:inline-flex font-mono tabular-nums ml-2" style={{ color: 'var(--text-dim)', whiteSpace: 'nowrap' }}>
         {formatDate(run.created_at)}
       </span>
       <button
@@ -702,24 +702,24 @@ export default function ChannelResearch() {
     <div className="rounded overflow-hidden" style={{ border: '1px solid var(--border)' }}>
       <TriggerForm onStarted={() => { loadRuns(); }} />
 
-      {/* Column headers */}
+      {/* Column headers — mirrors RunRow's actual flex layout (not a grid,
+          so column widths can shrink the same way RunRow's do). Date Range
+          and Created match RunRow's responsive hide on narrow screens. */}
       <div
-        className="grid px-4 py-2 text-[11px] font-bold tracking-[0.2em] uppercase"
+        className="flex items-center gap-3 px-4 py-2 text-[11px] font-bold tracking-[0.2em] uppercase"
         style={{
-          gridTemplateColumns: '36px 160px 1fr 200px 80px 90px 32px',
-          gap: '10px',
           background: 'var(--bg-panel)',
           borderBottom: '1px solid var(--border)',
           color: 'var(--text-dim)',
         }}
       >
-        <span></span>
-        <span>Channel</span>
-        <span></span>
-        <span>Date Range</span>
-        <span>Status</span>
-        <span>Created</span>
-        <span></span>
+        <span className="w-3 flex-shrink-0" aria-hidden="true"></span>
+        <span className="w-5 flex-shrink-0" aria-hidden="true"></span>
+        <span className="flex-1">Channel</span>
+        <span className="hidden sm:inline-flex" style={{ whiteSpace: 'nowrap' }}>Date Range</span>
+        <span style={{ whiteSpace: 'nowrap' }}>Status</span>
+        <span className="hidden sm:inline-flex ml-2" style={{ whiteSpace: 'nowrap' }}>Created</span>
+        <span className="w-[27px] flex-shrink-0" aria-hidden="true"></span>
       </div>
 
       {runs === null ? (

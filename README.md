@@ -7,8 +7,11 @@ A self-hosted Next.js tool for summarising YouTube videos and researching whole 
 - **Channel Research** — give it a channel and a date range; it fetches every upload in range, summarises each one, synthesises a single report, and lets you ask follow-up questions in a multi-turn chat grounded in the actual transcripts.
 - **Save-to-playlist queue** (optional, off by default) — add videos to a YouTube playlist from your phone; a background poller picks them up, summarises them, and removes them from the playlist.
 
-![YouTube Summaries and Channel Research panels, in demo mode with seeded sample data](docs/screenshot.png)
-*Demo mode (`DEMO_MODE=true`) — every row shown is seeded sample data, not a real video or channel.*
+![YouTube Summaries list and an expanded Channel Research run showing its synthesis report and chat thread, in demo mode with seeded sample data](docs/screenshot.png)
+*Demo mode (`DEMO_MODE=true`), with a Channel Research run expanded to show the synthesis and the chat thread — every row is seeded sample data, not a real video or channel.*
+
+![The same demo-mode home page at 390px wide](docs/screenshot-mobile.png)
+*Same page at phone width (390px).*
 
 **Requirements:** Node.js ≥ 20.9.0 (Next.js's own minimum). `npm test` needs Node ≥ 22.6, since it relies on `--experimental-strip-types`.
 
