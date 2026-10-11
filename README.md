@@ -14,6 +14,9 @@ A self-hosted Next.js tool for summarising YouTube videos and researching whole 
 ![The same demo-mode home page at 390px wide](docs/screenshot-mobile.png)
 *Same page at phone width (390px).*
 
+## Why I built it
+I watch a lot of technical videos and wanted a time-efficient way to see how they apply to what I'm actually building. Instead of a generic summary, "Analyse for me" compares a video against a short profile of my projects and tells me what's relevant. It started as a personal tool on my home server, and I cleaned it up into a public repo so anyone can run it.
+
 **Requirements:** Node.js ≥ 20.9.0 (Next.js's own minimum). `npm test` needs Node ≥ 22.6, since it relies on `--experimental-strip-types`.
 
 ## Try it with zero API keys
