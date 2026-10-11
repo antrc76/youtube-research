@@ -6,6 +6,7 @@ A self-hosted Next.js tool for summarising YouTube videos and researching whole 
 - **"Analyse for me"** — a deeper, optionally-personalised take on a saved video, streamed from a local or hosted LLM.
 - **Channel Research** — give it a channel and a date range; it fetches every upload in range, summarises each one, synthesises a single report, and lets you ask follow-up questions in a multi-turn chat grounded in the actual transcripts.
 - **Save-to-playlist queue** (optional, off by default) — add videos to a YouTube playlist from your phone; a background poller picks them up, summarises them, and removes them from the playlist.
+- **Listen** (optional, off by default) — have a video summary or a Channel Research synthesis read aloud via ElevenLabs text-to-speech.
 
 ![YouTube Summaries list and an expanded Channel Research run showing its synthesis report and chat thread, in demo mode with seeded sample data](docs/screenshot.png)
 *Demo mode (`DEMO_MODE=true`), with a Channel Research run expanded to show the synthesis and the chat thread — every row is seeded sample data, not a real video or channel.*
@@ -45,6 +46,7 @@ Fill in whichever of these you want to use:
 | YouTube Summaries + Analyse for me | `OLLAMA_HOST` (free, local) **or** `ANTHROPIC_API_KEY` |
 | Channel Research | the above, **plus** `YOUTUBE_API_KEY` |
 | Save-to-playlist queue (optional) | `YOUTUBE_QUEUE_PLAYLIST_ID` + Google OAuth files — see below |
+| Listen (optional) | `ELEVENLABS_API_KEY` — see below |
 
 - **Ollama**: install from [ollama.com](https://ollama.com), then `ollama pull mistral:7b` (or any model — set `OLLAMA_MODEL` to match). Used automatically for prompts under `LOCAL_TOKEN_BUDGET` tokens (default 6000); everything larger goes to Anthropic if configured.
 - **Anthropic**: get a key at [console.anthropic.com](https://console.anthropic.com).
@@ -139,6 +141,31 @@ few minutes — without opening this app at all.
 Both file paths are **never committed** — they're real credentials, kept
 entirely outside the repo by design (see `.gitignore`).
 
+## Optional: Listen (ElevenLabs)
+
+Reads a video summary or a Channel Research synthesis aloud, via
+[ElevenLabs](https://elevenlabs.io)'s text-to-speech API. Off by default —
+the Listen button only renders when `ELEVENLABS_API_KEY` is set.
+
+1. Create a free ElevenLabs account and copy an API key.
+2. In `.env`, set `ELEVENLABS_API_KEY=...`. Optionally set
+   `ELEVENLABS_VOICE_ID` to a voice from your ElevenLabs account — it
+   defaults to ElevenLabs' premade "Rachel" voice if left blank.
+3. Restart the app. A **Listen** button appears next to each video summary
+   and next to a Channel Research synthesis report.
+
+Markdown (headings, bold/italic, links, tables, code, bullets) is stripped
+to plain text before it's sent, and the request is capped at ~2,000
+characters (cut at the last full sentence, not mid-word) to stay comfortably
+inside ElevenLabs' free-tier monthly character credit. Each distinct
+(cleaned text, voice) pair is synthesised once and cached as an MP3 under
+`DATA_DIR/tts/` — re-clicking Listen on the same content never calls the API
+again. That cache is never pruned automatically.
+
+This never runs in `DEMO_MODE` (so the demo never makes a real, billable
+call against seeded sample content), even if a real key happens to also be
+set.
+
 ## Testing
 
 ```bash
@@ -146,8 +173,11 @@ npm test
 ```
 
 Covers the queue poller's retry/backoff/already-done logic
-(`features/youtube/queue-poller.test.ts`) against a temporary SQLite file —
-never the real database, and no network calls.
+(`features/youtube/queue-poller.test.ts`) against a temporary SQLite file,
+the GFM table parser used by `MarkdownBlock` (`components/markdown-table.test.ts`),
+and the markdown-to-speech text pipeline used by Listen
+(`features/youtube/tts-text.test.ts`) — stripping, the 2,000-character cap,
+and cache-key stability. No network calls, never the real database.
 
 ## Limitations
 
@@ -158,9 +188,12 @@ never the real database, and no network calls.
 - If the server restarts while a Channel Research run is in progress, that
   run's row is stuck showing `running` forever — there's no recovery for an
   interrupted run.
-- Automated tests currently cover only the queue poller
-  (`features/youtube/queue-poller.test.ts`); the rest of the app is
+- Automated tests cover the queue poller, the GFM table parser, and the
+  Listen text-stripping/truncation pipeline — everything else (the UI, the
+  summarise/synthesis/chat pipelines, the ElevenLabs call itself) is
   untested.
+- The Listen feature's audio cache (`DATA_DIR/tts/`) grows forever; nothing
+  prunes old entries.
 
 ## What this app deliberately doesn't do
 
@@ -172,4 +205,5 @@ never the real database, and no network calls.
   for database access — SQLite is a normal in-process dependency
   (`better-sqlite3`), same as any other npm package.
 - No analytics, telemetry, or anything that leaves this machine besides the
-  API calls you've explicitly configured (YouTube, Ollama, Anthropic).
+  API calls you've explicitly configured (YouTube, Ollama, Anthropic,
+  ElevenLabs).

@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { Sparkles, Brain, Square, Trash2, RefreshCw } from 'lucide-react';
 import MarkdownBlock from '@/components/MarkdownBlock';
+import ListenButton from '@/components/ListenButton';
 
 export interface TranscriptEntry {
   ts: string;
@@ -82,7 +83,11 @@ function prettifyModel(m: string | undefined): string {
   return m;
 }
 
-export default function YouTubeTranscripts() {
+interface Props {
+  listenEnabled?: boolean;
+}
+
+export default function YouTubeTranscripts({ listenEnabled = false }: Props) {
   const [items, setItems] = useState<TranscriptEntry[] | null>(null);
   const [openKey, setOpenKey] = useState<string | null>(null);
   const [transcriptKey, setTranscriptKey] = useState<string | null>(null);
@@ -432,6 +437,8 @@ export default function YouTubeTranscripts() {
                   </div>
 
                   <div className="mt-3 flex gap-2 flex-wrap items-center">
+                    <ListenButton text={t.summary} enabled={listenEnabled} />
+
                     {cached && !busy ? (
                       <>
                         <button

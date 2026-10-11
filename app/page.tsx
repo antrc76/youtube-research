@@ -6,6 +6,10 @@ export const dynamic = 'force-dynamic';
 
 export default function Home() {
   const demoMode = process.env.DEMO_MODE === 'true';
+  // Demo mode always ships with zero real keys configured, by design — so it
+  // never calls the (paid, rate-limited) ElevenLabs API, even if a real key
+  // happens to be set alongside DEMO_MODE=true.
+  const listenEnabled = Boolean(process.env.ELEVENLABS_API_KEY) && !demoMode;
 
   return (
     <div className="min-h-full py-8 px-4 sm:px-8 space-y-6 max-w-5xl mx-auto w-full">
@@ -33,14 +37,14 @@ export default function Home() {
         <h2 className="text-sm font-bold tracking-widest uppercase" style={{ color: 'var(--gold)' }}>
           YouTube Summaries
         </h2>
-        <YouTubeTranscripts />
+        <YouTubeTranscripts listenEnabled={listenEnabled} />
       </section>
 
       <section className="space-y-3">
         <h2 className="text-sm font-bold tracking-widest uppercase" style={{ color: '#c084fc' }}>
           Channel Research
         </h2>
-        <ChannelResearch />
+        <ChannelResearch listenEnabled={listenEnabled} />
       </section>
     </div>
   );

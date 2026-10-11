@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ChevronDown, ChevronRight, Play, RefreshCw, Trash2 } from 'lucide-react';
 import MarkdownBlock from '@/components/MarkdownBlock';
+import ListenButton from '@/components/ListenButton';
 
 const ACCENT_COLOR = '#c084fc'; // purple — distinct from the Summaries panel's gold
 
@@ -179,6 +180,7 @@ function VideoRow({ video, defaultOpen }: VideoRowProps) {
 export interface RunDetailViewProps {
   runId: number;
   onBack: () => void;
+  listenEnabled?: boolean;
 }
 
 type AskStatus = 'idle' | 'loading' | 'streaming' | 'error';
@@ -188,7 +190,7 @@ interface ChatMessage {
   content: string;
 }
 
-export function RunDetailView({ runId, onBack }: RunDetailViewProps) {
+export function RunDetailView({ runId, onBack, listenEnabled = false }: RunDetailViewProps) {
   const [detail, setDetail] = useState<RunDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -361,11 +363,14 @@ export function RunDetailView({ runId, onBack }: RunDetailViewProps) {
           className="px-4 py-4"
           style={{ borderBottom: '1px solid var(--border)' }}
         >
-          <div
-            className="text-[10px] font-bold tracking-[0.25em] uppercase mb-3"
-            style={{ color: ACCENT_COLOR }}
-          >
-            Synthesis Report
+          <div className="flex items-center justify-between gap-3 mb-3 flex-wrap">
+            <div
+              className="text-[10px] font-bold tracking-[0.25em] uppercase"
+              style={{ color: ACCENT_COLOR }}
+            >
+              Synthesis Report
+            </div>
+            <ListenButton text={detail.synthesis_md} enabled={listenEnabled} />
           </div>
           <MarkdownBlock content={detail.synthesis_md} />
         </div>
@@ -652,7 +657,11 @@ function TriggerForm({ onStarted }: TriggerFormProps) {
   );
 }
 
-export default function ChannelResearch() {
+interface ChannelResearchProps {
+  listenEnabled?: boolean;
+}
+
+export default function ChannelResearch({ listenEnabled = false }: ChannelResearchProps) {
   const [runs, setRuns] = useState<ResearchRun[] | null>(null);
   const [selectedRun, setSelectedRun] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -693,7 +702,7 @@ export default function ChannelResearch() {
   if (selectedRun !== null) {
     return (
       <div className="rounded overflow-hidden" style={{ border: '1px solid var(--border)' }}>
-        <RunDetailView runId={selectedRun} onBack={() => setSelectedRun(null)} />
+        <RunDetailView runId={selectedRun} onBack={() => setSelectedRun(null)} listenEnabled={listenEnabled} />
       </div>
     );
   }
