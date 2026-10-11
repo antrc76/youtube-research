@@ -8,9 +8,11 @@ export const dynamic = 'force-dynamic';
 const DATA_DIR = process.env.DATA_DIR ?? path.join(process.cwd(), 'data');
 const CACHE_DIR = path.join(DATA_DIR, 'tts');
 
-// ElevenLabs' default premade voice ("Rachel") — used when ELEVENLABS_VOICE_ID
+// ElevenLabs' default premade voice ("Adam") — used when ELEVENLABS_VOICE_ID
 // is left blank, so the feature works out of the box with just an API key.
-const DEFAULT_VOICE_ID = '21m00Tcm4TlvDq8ikWAM';
+// Must be a premade voice, not a library voice: library voices return 402
+// "paid_plan_required" over the API on a free ElevenLabs account.
+const DEFAULT_VOICE_ID = 'pNInz6obpgDQGcFmaJgB';
 
 export async function POST(req: Request) {
   const apiKey = process.env.ELEVENLABS_API_KEY;
@@ -87,6 +89,17 @@ export async function POST(req: Request) {
       return NextResponse.json(
         { error: 'ElevenLabs rate limit or free-tier credit quota exhausted.' },
         { status: 429 },
+      );
+    }
+    if (res.status === 402) {
+      return NextResponse.json(
+        {
+          error:
+            'ElevenLabs rejected this voice (402 paid_plan_required). Free accounts can only use ' +
+            'premade/default voices over the API, not library voices — set ELEVENLABS_VOICE_ID to a ' +
+            'premade voice from your account, or unset it to use the built-in default.',
+        },
+        { status: 402 },
       );
     }
     const detail = await res.text().catch(() => '');

@@ -154,9 +154,14 @@ Reads the first ~2,000 characters and caches the generated audio, so repeat play
 1. Create a free ElevenLabs account and copy an API key.
 2. In `.env`, set `ELEVENLABS_API_KEY=...`. Optionally set
    `ELEVENLABS_VOICE_ID` to a voice from your ElevenLabs account — it
-   defaults to ElevenLabs' premade "Rachel" voice if left blank.
+   defaults to ElevenLabs' premade "Adam" voice if left blank.
 3. Restart the app. A **Listen** button appears next to each video summary
    and next to a Channel Research synthesis report.
+
+Free ElevenLabs accounts can't use library voices over the API — it returns
+402 `paid_plan_required`. Stick to a premade/default voice (like the
+built-in default above), or test any `ELEVENLABS_VOICE_ID` you set before
+relying on it.
 
 Markdown (headings, bold/italic, links, tables, code, bullets) is stripped
 to plain text before it's sent, and the request is capped at ~2,000
