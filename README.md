@@ -147,6 +147,10 @@ Reads a video summary or a Channel Research synthesis aloud, via
 [ElevenLabs](https://elevenlabs.io)'s text-to-speech API. Off by default —
 the Listen button only renders when `ELEVENLABS_API_KEY` is set.
 
+![A YouTube Summaries row expanded, showing the Listen button alongside Analyse for me, Delete, and View full transcript](docs/screenshot-listen.png)
+
+Reads the first ~2,000 characters and caches the generated audio, so repeat plays don't call the API again.
+
 1. Create a free ElevenLabs account and copy an API key.
 2. In `.env`, set `ELEVENLABS_API_KEY=...`. Optionally set
    `ELEVENLABS_VOICE_ID` to a voice from your ElevenLabs account — it
